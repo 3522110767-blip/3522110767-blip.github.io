@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ByteCraft - Acceso y Dashboard</title>
+
+    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* Variables y Estilos Base (Login) */
+        :root {
+            --dark-bg: #100f1c;
+            --neon-blue: #00e0ff;
+            --neon-cyan: #cc00ff;
+            --text-light: #e0e0e0;
+            --card-bg: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Estilos Generales */
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            transition: background-color 0.5s;
+        }
+
+        /* Estilos de Login */
+        .login-body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f0a21, #000000);
+            min-height: 100vh;
+        }
+
+        #login-screen {
+            z-index: 1000;
+        }
+
+        .neon-background-effect {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 150px;
+            background-image: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(153, 0, 255, 0.1) 20%,
+                rgba(208, 0, 255, 0.316) 50%,
+                rgba(149, 0, 255, 0.488) 80%,
+                transparent 100%
+            );
+            filter: blur(3px);
+            animation: wave-line-move 10s linear infinite,
+                       wave-form 5s infinite alternate ease-in-out;
+        }
+
+        @keyframes wave-line-move {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes wave-form {
+            0% { clip-path: polygon(0 80%, 33% 40%, 66% 60%, 100% 20%, 100% 100%, 0 100%); }
+            100% { clip-path: polygon(0 20%, 33% 60%, 66% 40%, 100% 80%, 100% 100%, 0 100%); }
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 40px;
+            width: 350px;
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .login-card::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 17px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-cyan), var(--neon-blue));
+            filter: blur(4px);
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .login-card:hover::before {
+            opacity: 0.8;
+        }
+
+        .login-card h2 {
+            margin-bottom: 30px;
+            color: var(--neon-blue);
+        }
+
+        .input-glow-group {
+            position: relative;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .input-glow-group input {
+            width: 100%;
+            padding: 15px 10px 5px 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+            font-size: 17px;
+            transition: all 0.4s ease;
+            outline: none;
+        }
+
+        .input-glow-group input:focus,
+        .input-glow-group input:valid {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 5px var(--neon-blue), 0 0 3px var(--neon-cyan) inset;
+            background: rgba(0, 224, 255, 0.03);
+        }
+
+        .input-glow-group label {
+            position: absolute;
+            top: 15px;
+            left: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+
+        .input-glow-group input:focus ~ label,
+        .input-glow-group input:valid ~ label {
+            top: -5px;
+            left: 5px;
+            font-size: 11px;
+            padding: 0 5px;
+            color: var(--neon-cyan);
+            background-color: var(--dark-bg);
+            border-radius: 3px;
+        }
+
+        .neon-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-cyan));
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--dark-bg);
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .neon-button:hover {
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-blue));
+            transform: translateY(-2px);
+        }
+
+        .neon-button:active {
+            transform: translateY(0);
+        }
+
+        /* Estilos de Dashboard */
+        .dashboard-body {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .text-gradient {
+            background-image: linear-gradient(to right, #6b21a8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dashboard-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(107, 33, 168, 0.2);
+        }
+
+        .nav-link {
+            color: #6b7280;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 150ms;
+        }
+
+        .nav-link:hover {
+            color: #7c3aed;
+        }
+
+        .nav-link.active {
+            background-color: #7c3aed;
+            color: #fff;
+        }
+    </style>
+</head>
+<body class="login-body">
+
+    <div id="login-screen">
+        <div class="neon-background-effect"></div>
+
+        <div class="login-card">
+            <h2>Iniciar Sesión</h2>
+
+            <form id="loginForm">
+                <div class="input-glow-group">
+                    <input type="text" id="username" required />
+                    <label for="username">Usuario</label>
+                </div>
+
+                <div class="input-glow-group">
+                    <input type="password" id="password" required />
+                    <label for="password">Contraseña</label>
+                </div>
+
+                <button type="submit" class="neon-button">Entrar</button>
+            </form>
+
+            <p id="login-error" class="text-red-400 text-sm mt-4 hidden">
+                Usuario o contraseña incorrectos.
+            </p>
+            <p class="text-xs text-gray-500 mt-2">Credenciales de prueba: admin / admin</p>
+        </div>
+    </div>
+
+    <div id="dashboard-screen" class="min-h-screen bg-gray-100 hidden">
+        <nav class="bg-white shadow-md sticky top-0 z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <span class="text-2xl font-bold text-gradient">ByteCraft</span>
+
+                        <div class="hidden md:block ml-10">
+                            <div class="flex items-baseline space-x-4" id="nav-container">
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <button id="installButton" class="text-sm font-medium text-purple-600 hover:text-purple-800 hidden">
+                            <i class="fas fa-download mr-1"></i> Instalar App
+                        </button>
+                        <button id="logoutButton" class="text-sm font-medium text-gray-600 hover:text-gray-800">
+                            <i class="fas fa-sign-out-alt mr-1"></i> Salir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="py-6">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div id="content-area" class="bg-white p-6 shadow-xl rounded-lg min-h-[70vh]">
+                    <p class="text-gray-500">Cargando contenido...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <template id="template-dashboard">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Panel Principal</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="dashboard-card bg-purple-50 p-6 rounded-lg shadow-md border-t-4 border-purple-600">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-700">Proyectos Activos</h3>
+                    <i class="fas fa-layer-group text-2xl text-purple-600"></i>
+                </div>
+                <p id="stats-proyectos" class="mt-4 text-4xl font-extrabold text-purple-900">0</p>
+                <p class="text-sm text-gray-500 mt-1">Total de proyectos en curso.</p>
+            </div>
+
+            <div class="dashboard-card bg-blue-50 p-6 rounded-lg shadow-md border-t-4 border-blue-600">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-700">Clientes</h3>
+                    <i class="fas fa-user-tie text-2xl text-blue-600"></i>
+                </div>
+                <p id="stats-clientes" class="mt-4 text-4xl font-extrabold text-blue-900">0</p>
+                <p class="text-sm text-gray-500 mt-1">Clientes activos en la base de datos.</p>
+            </div>
+
+            <div class="dashboard-card bg-red-50 p-6 rounded-lg shadow-md border-t-4 border-red-600">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-700">Tareas Pendientes</h3>
+                    <i class="fas fa-bell text-2xl text-red-600"></i>
+                </div>
+                <p id="stats-tareas" class="mt-4 text-4xl font-extrabold text-red-900">0</p>
+                <p class="text-sm text-gray-500 mt-1">Tareas sin completar esta semana.</p>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Actividad Reciente</h2>
+            <div class="bg-white p-4 rounded-lg shadow border border-gray-200">
+                <p class="text-gray-500">Aquí se mostrarán los últimos movimientos (a implementar).</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="template-clientes">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Gestión de Clientes</h1>
+
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-700">Lista de Clientes</h2>
+            <button class="px-4 py-2 bg-purple-600 text-white rounded-md opacity-50 cursor-not-allowed">
+                <i class="fas fa-plus mr-1"></i> Nuevo Cliente (Deshabilitado)
+            </button>
+        </div>
+
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+            <p class="text-yellow-700 font-semibold">
+                <i class="fas fa-info-circle mr-2"></i> Base de Datos Deshabilitada.
+            </p>
+            <p class="text-yellow-600 text-sm mt-1">
+                La funcionalidad para agregar y ver clientes está desactivada.
+            </p>
+        </div>
+    </template>
+
+    <template id="template-tareas">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Gestión de Tareas</h1>
+
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-700">Lista de Tareas</h2>
+            <button class="px-4 py-2 bg-blue-600 text-white rounded-md opacity-50 cursor-not-allowed">
+                <i class="fas fa-plus mr-1"></i> Nueva Tarea (Deshabilitada)
+            </button>
+        </div>
+
+        <p class="text-gray-500">Esta sección es una vista previa de la gestión de tareas.</p>
+    </template>
+
+    <script>
+        // CONFIGURACIÓN DE LA APLICACIÓN (el JSON que solicitaste)
+        const appConfig = {
+            login: { username: "admin", password: "admin" }, // Credenciales
+            app_config: { default_route: "dashboard" },
+            routes: {
+                dashboard: { title: "Dashboard - ByteCraft", template_id: "template-dashboard", icon: "fas fa-home", label: "Dashboard" },
+                clientes: { title: "Clientes - ByteCraft", template_id: "template-clientes", icon: "fas fa-users", label: "Clientes" },
+                tareas: { title: "Tareas - ByteCraft", template_id: "template-tareas", icon: "fas fa-tasks", label: "Tareas" }
+            }
+        };
+
+        // ELEMENTOS DOM
+        const body = document.body;
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardScreen = document.getElementById('dashboard-screen');
+        const loginForm = document.getElementById('loginForm');
+        const loginErrorMsg = document.getElementById('login-error');
+        const contentArea = document.getElementById('content-area');
+        const navContainer = document.getElementById('nav-container');
+        const installButton = document.getElementById('installButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        let deferredPrompt; // Para el botón de instalación de PWA
+
+        // --- FUNCIONES DE ESTADO Y NAVEGACIÓN ---
+
+        /** Muestra la pantalla de Dashboard y oculta el Login */
+        function showDashboard() {
+            body.classList.remove('login-body');
+            body.classList.add('dashboard-body');
+            loginScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+            renderNavLinks(); // Asegura que los enlaces de navegación existan
+            
+            // Navega a la ruta inicial o la que esté en el hash
+            const hash = window.location.hash.substring(1);
+            const page = appConfig.routes[hash] ? hash : appConfig.app_config.default_route;
+            navigate(page);
+        }
+
+        /** Muestra la pantalla de Login y oculta el Dashboard */
+        function showLogin() {
+            body.classList.remove('dashboard-body');
+            body.classList.add('login-body');
+            dashboardScreen.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            window.location.hash = ''; // Limpia la URL
+        }
+
+        /** Genera dinámicamente los enlaces de navegación a partir de appConfig.routes */
+        function renderNavLinks() {
+            navContainer.innerHTML = '';
+            Object.entries(appConfig.routes).forEach(([key, route]) => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.id = `nav-${key}`;
+                link.dataset.page = key;
+                link.className = 'nav-link';
+                link.innerHTML = `<i class="${route.icon} mr-1"></i> ${route.label}`;
+                navContainer.appendChild(link);
+            });
+            // Re-asigna el listener para la navegación
+            navContainer.addEventListener('click', handleNavigationClick);
+        }
+
+        /** Carga el contenido de la plantilla para la página seleccionada */
+        function navigate(pageKey, event) {
+            if (event) event.preventDefault();
+
+            const route = appConfig.routes[pageKey];
+            if (!route) return;
+
+            document.title = route.title;
+
+            const template = document.getElementById(route.template_id);
+            if (template) {
+                const clone = document.importNode(template.content, true);
+                contentArea.innerHTML = '';
+                contentArea.appendChild(clone);
+            }
+
+            // Actualiza la clase 'active' de los enlaces
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            const activeLink = document.getElementById(`nav-${pageKey}`);
+            if (activeLink) activeLink.classList.add('active');
+
+            history.pushState(null, '', '#' + pageKey);
+
+            if (event && event.target.blur) event.target.blur();
+        }
+        
+        // --- MANEJADORES DE EVENTOS ---
+
+        function handleNavigationClick(e) {
+            const pageKey = e.target.closest('[data-page]')?.dataset.page;
+            if (pageKey) navigate(pageKey, e);
+        }
+
+        loginForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value.toLowerCase().trim();
+            const password = document.getElementById("password").value;
+
+            loginErrorMsg.classList.add("hidden");
+
+            if (username === appConfig.login.username && password === appConfig.login.password) {
+                localStorage.setItem('isAuthenticated', 'true');
+                showDashboard();
+            } else {
+                loginErrorMsg.textContent = "Usuario o contraseña incorrectos.";
+                loginErrorMsg.classList.remove("hidden");
+            }
+        });
+
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('isAuthenticated');
+            showLogin();
+        });
+
+        // --- LÓGICA PWA ---
+
+        // 1. Registro del Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(reg => console.log('Service Worker registrado.', reg))
+                    .catch(err => console.error('Error al registrar Service Worker:', err));
+            });
+        }
+
+        // 2. Manejo del botón de instalación
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.classList.remove('hidden');
+        });
+
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`Resultado de la instalación: ${outcome}`);
+                if (outcome === 'accepted') {
+                    installButton.classList.add('hidden'); // Ocultar después de aceptar/rechazar
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        // --- INICIALIZACIÓN ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar si el usuario está autenticado al cargar
+            const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+            if (isAuthenticated) {
+                showDashboard();
+            } else {
+                showLogin();
+            }
+
+            // Manejar la navegación por historial (flechas del navegador)
+            window.addEventListener('popstate', () => {
+                const hash = window.location.hash.substring(1);
+                if (appConfig.routes[hash] && dashboardScreen.classList.contains('hidden') === false) {
+                    navigate(hash);
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
