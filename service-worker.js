@@ -5,7 +5,7 @@ const urlsToCache = [
     'manifest.json',
     'https://cdn.tailwindcss.com',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css',
-    // URLs de iconos para PWA (si están en la carpeta 'icons')
+    // URLs de iconos (debes tener la carpeta icons)
     'icons/icon-192x192.png',
     'icons/icon-512x512.png'
 ];
@@ -22,15 +22,14 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
-    // Sirve el contenido desde el caché si está disponible,
-    // o realiza una solicitud de red si no lo está.
+    // Sirve el contenido desde el caché si está disponible
     event.respondWith(
         caches.match(event.request)
             .then(response => {
                 if (response) {
-                    return response; // Respuesta del caché
+                    return response;
                 }
-                return fetch(event.request); // Respuesta de la red
+                return fetch(event.request);
             })
     );
 });
