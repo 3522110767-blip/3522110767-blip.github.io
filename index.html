@@ -36,6 +36,7 @@
 
         /* Estilos de Login */
         .login-body {
+            /* ESTO CENTRA LA PÁGINA EN MÓVILES Y ESCRITORIOS */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -84,7 +85,7 @@
             border-radius: 15px;
             padding: 40px;
             width: 350px;
-            max-width: 90%;
+            max-width: 90%; /* Asegura que se adapte a celulares */
             text-align: center;
             position: relative;
             color: var(--text-light);
@@ -387,30 +388,26 @@
 
         // --- FUNCIONES DE ESTADO Y NAVEGACIÓN ---
 
-        /** Muestra la pantalla de Dashboard y oculta el Login */
         function showDashboard() {
             body.classList.remove('login-body');
             body.classList.add('dashboard-body');
             loginScreen.classList.add('hidden');
             dashboardScreen.classList.remove('hidden');
-            renderNavLinks(); // Asegura que los enlaces de navegación existan
+            renderNavLinks();
             
-            // Navega a la ruta inicial o la que esté en el hash
             const hash = window.location.hash.substring(1);
             const page = appConfig.routes[hash] ? hash : appConfig.app_config.default_route;
             navigate(page);
         }
 
-        /** Muestra la pantalla de Login y oculta el Dashboard */
         function showLogin() {
             body.classList.remove('dashboard-body');
             body.classList.add('login-body');
             dashboardScreen.classList.add('hidden');
             loginScreen.classList.remove('hidden');
-            window.location.hash = ''; // Limpia la URL
+            window.location.hash = '';
         }
 
-        /** Genera dinámicamente los enlaces de navegación a partir de appConfig.routes */
         function renderNavLinks() {
             navContainer.innerHTML = '';
             Object.entries(appConfig.routes).forEach(([key, route]) => {
@@ -422,11 +419,9 @@
                 link.innerHTML = `<i class="${route.icon} mr-1"></i> ${route.label}`;
                 navContainer.appendChild(link);
             });
-            // Re-asigna el listener para la navegación
             navContainer.addEventListener('click', handleNavigationClick);
         }
 
-        /** Carga el contenido de la plantilla para la página seleccionada */
         function navigate(pageKey, event) {
             if (event) event.preventDefault();
 
@@ -442,7 +437,6 @@
                 contentArea.appendChild(clone);
             }
 
-            // Actualiza la clase 'active' de los enlaces
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
@@ -483,18 +477,17 @@
             showLogin();
         });
 
-        // --- LÓGICA PWA ---
+        // --- LÓGICA PWA PARA EL BOTÓN DE INSTALACIÓN ---
 
-        // 1. Registro del Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
+                // Registrar el Service Worker
                 navigator.serviceWorker.register('./service-worker.js')
                     .then(reg => console.log('Service Worker registrado.', reg))
                     .catch(err => console.error('Error al registrar Service Worker:', err));
             });
         }
 
-        // 2. Manejo del botón de instalación
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -507,7 +500,7 @@
                 const { outcome } = await deferredPrompt.userChoice;
                 console.log(`Resultado de la instalación: ${outcome}`);
                 if (outcome === 'accepted') {
-                    installButton.classList.add('hidden'); // Ocultar después de aceptar/rechazar
+                    installButton.classList.add('hidden');
                 }
                 deferredPrompt = null;
             }
@@ -516,7 +509,6 @@
         // --- INICIALIZACIÓN ---
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Verificar si el usuario está autenticado al cargar
             const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
             if (isAuthenticated) {
                 showDashboard();
@@ -524,7 +516,6 @@
                 showLogin();
             }
 
-            // Manejar la navegación por historial (flechas del navegador)
             window.addEventListener('popstate', () => {
                 const hash = window.location.hash.substring(1);
                 if (appConfig.routes[hash] && dashboardScreen.classList.contains('hidden') === false) {
