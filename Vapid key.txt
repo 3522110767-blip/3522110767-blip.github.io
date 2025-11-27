@@ -1,0 +1,5 @@
+{
+"subject": "mailto: <itsbabytrap@gmail.com>",
+"publicKey": "BE2bcd8sXnk20P-vV1k2sYvxDFSZLGFE1faOZRVat0MbOw4JkB0EnPXujwpShzJmEVngeVi1HyvF61XcmtoHIpk",
+"privateKey": "zQ2aiPX2Hcl2dyAWHsUQgswNWmDJbeB6MFWFDrMRA-A"
+}
